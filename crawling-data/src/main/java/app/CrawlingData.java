@@ -37,8 +37,8 @@ public class CrawlingData {
                     //.setScheduler(new RedisScheduler("localhost"))
                     //设置Pipeline，将结果以json方式保存到文件
                     .addPipeline(new JsonFilePipeline(dir))
-                    //开启5个线程同时执行
-                    .thread(5)
+                    //开启50个线程同时执行
+                    .thread(50)
                     //启动爬虫
                     .run();
 

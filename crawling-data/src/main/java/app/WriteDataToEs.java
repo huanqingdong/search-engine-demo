@@ -53,9 +53,8 @@ public class WriteDataToEs {
 
         try {
             String dir = "D:/es-doc/权威指南";
-            IndexRequest request = new IndexRequest("es_doc", "_doc");
 
-
+            // 获取爬取文件集合
             @SuppressWarnings("unchecked")
             Collection<File> collection = FileUtils.listFiles(new File(dir), TrueFileFilter.TRUE, TrueFileFilter.TRUE);
 
@@ -82,10 +81,10 @@ public class WriteDataToEs {
             });
 
             // 使用bulk写入ES
-            // writeBulkBatch(requests);
+            writeBulkBatch(requests);
 
             // 使用for循环写入
-            writeForBatch(requests);
+            //writeForBatch(requests);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,7 +121,7 @@ public class WriteDataToEs {
      *
      * @param requests 待写入IndexRequest列表
      */
-    public static void writeForBatch(List<IndexRequest> requests) {
+    private static void writeForBatch(List<IndexRequest> requests) {
         PerformanceMonitor.begin("writeForBatch", false);
         RestHighLevelClient client = null;
         try {
