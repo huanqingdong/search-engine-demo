@@ -1,0 +1,9 @@
+spring:
+  elasticsearch:
+    rest:
+      # es连接地址
+      uris: http://192.168.1.14:9200
+      # 用户名
+      username: search
+      # 密码
+      password: 123456
