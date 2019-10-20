@@ -1,0 +1,14 @@
+version: '2.2'
+services:
+  kibana:
+    container_name: kibana
+    image: kibana:6.8.3
+    environment:
+      ELASTICSEARCH_HOSTS: http://192.168.1.14:9200
+      I18N_LOCALE: zh-CN
+    ports:
+      - 5601:5601
+    networks:
+      - net
+networks:
+  net:

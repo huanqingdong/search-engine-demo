@@ -1,0 +1,30 @@
+version: '2.2'
+services:
+  es:
+    image: huanqingdong/elasticsearch:6.8.3-ik
+    container_name: es01
+    hostname: docker-14
+    restart: always
+    environment:
+      - node.name=es01
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - net
+    extra_hosts:
+      - "ikserver:192.168.1.14"
+volumes:
+  data:
+    driver: local
+
+networks:
+  net:

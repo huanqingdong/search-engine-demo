@@ -1,0 +1,11 @@
+version: "2.2"
+services:
+  nginx:
+    image: nginx
+    restart: always
+    container_name: nginx
+    privileged: true
+    volumes:
+      - /usr/share/nginx/html/:/usr/share/nginx/html/
+    ports:
+      - 80:80
