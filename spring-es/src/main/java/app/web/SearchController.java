@@ -36,8 +36,7 @@ public class SearchController {
     public AggregatedPage<EsPageVO> fullTextSearch(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
                                                    @RequestParam(value = "type", required = false, defaultValue = "") String type,
                                                    @RequestParam(value = "page", required = false, defaultValue = "0") int page,
-                                                   @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize
-    ) {
+                                                   @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize) {
 
         log.info("keyword:{}, type:{},page:{},pageSize:{}", keyword, type, page, pageSize);
 

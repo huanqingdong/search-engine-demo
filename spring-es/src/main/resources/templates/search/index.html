@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+
+<head>
+    <title>Elastic search 文档</title>
+
+    <meta charset="UTF-8">
+    <!-- 引入element样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 先引入 Vue -->
+    <script type="text/javascript" src="https://unpkg.com/vue"></script>
+    <!-- 引入element组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+    <style>
+        /* 查询类型选择框宽度和背景色设置 */
+        .el-select .el-input {
+            width: 150px;
+        }
+
+        .input-with-select .el-input-group__prepend {
+            background-color: #fff;
+        }
+
+        /*标题和内容的字体等设置*/
+        .title {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .content {
+            margin-bottom: 4px;
+            color: #8a8a8a;
+            font-size: 14px;
+            line-height: 24px;
+        }
+
+    </style>
+</head>
+
+<body>
+<div id="app">
+
+    <!-- 查询框部分 -->
+    <el-row>
+        <el-col :span="12" :offset="6">
+            <el-input placeholder="请输入内容" v-model="keyword" class="input-with-select" @keyup.enter.native="search">
+                <el-select v-model="type" slot="prepend" placeholder="请选择" @change="typeChange">
+                    <el-option label="单词检索" value="term"></el-option>
+                    <el-option label="短语检索" value="phrase"></el-option>
+                </el-select>
+                <el-button slot="append" type="primary" @click.native.prevent="search"
+                           icon="el-icon-search">搜索
+                </el-button>
+            </el-input>
+        </el-col>
+    </el-row>
+
+    <!-- 内容显示部分 -->
+    <el-row>
+        <el-col :span="16" :offset="4" v-for="(content, index) in contents" :key="content.oid">
+            <el-card :body-style="{ padding: '0px' }">
+                <div class="clearfix" style="padding: 14px;">
+                    <div>
+                        <span class="title" v-html="content.title" @click="view(content.url)"></span>
+                        <span style="float: right">评分：{{content.score}}</span>
+                    </div>
+                    <span class="content" v-html="content.content"></span>
+                    <div class="bottom clearfix">
+                        <i style="float: right" class="el-icon-time">{{ content.toEsDate }}</i>
+                    </div>
+                </div>
+            </el-card>
+        </el-col>
+    </el-row>
+
+    <!-- 分页插件部分 -->
+    <el-row>
+        <el-col :span="16" :offset="4">
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-sizes="[10, 20, 50, 100]"
+                    :page-size="pageSize"
+                    layout="sizes, prev, pager, next, jumper"
+                    :total="total">
+            </el-pagination>
+        </el-col>
+    </el-row>
+
+
+</div>
+</body>
+
+
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            currentPage: 1, // 初始页码
+            pageSize: 10,   // 每页的数据
+            total: 0,       // 总记录数
+            keyword: '权威指南', // 关键词
+            type: 'term',       //查询方式
+            contents: []        //查询结果
+        },
+        created: function () {
+            this.search()
+        },
+        methods: {
+            // 每页大小变更处理函数
+            handleSizeChange: function (size) {
+                this.pageSize = size;
+                console.log("每页大小:" + this.pageSize);  //每页下拉显示数据
+                this.search();
+            },
+            // 页码变更处理函数
+            handleCurrentChange: function (currentPage) {
+                this.currentPage = currentPage;
+                console.log("当前页码:" + this.currentPage);  //点击第几页
+                this.search();
+            },
+            search: function () {
+                // 模糊弹层
+                var loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                // 查询参数
+                var data = {
+                    keyword: this.keyword,
+                    type: this.type,
+                    page: this.currentPage - 1,
+                    pageSize: this.pageSize
+                };
+                // post请求
+                $.post("/search/fullTextSearch", data)
+                    .then(function (response) {
+                        console.log("response", response);
+                        if (response && response.totalElements && response.content) {
+                            console.log("总条数:" + response.totalElements);
+                            vm.total = response.totalElements;
+                            vm.contents = response.content;
+                        } else {
+                            vm.total = 0;
+                            vm.contents = [];
+                        }
+                        loading.close();
+                    });
+            },
+            // 点击title时，跳转官方地址
+            view: function (url) {
+                console.log(url);
+                window.open(url, "_blank");
+            },
+            // 查询类型变更时，当前页码改为1
+            typeChange: function () {
+                this.currentPage = 1;
+            }
+        }
+    })
+</script>
+
+</html>

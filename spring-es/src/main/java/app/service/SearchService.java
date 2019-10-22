@@ -47,8 +47,8 @@ public class SearchService {
      * 高亮字段
      */
     private final HighlightBuilder.Field[] highlightFields = new HighlightBuilder.Field[]{
-            new HighlightBuilder.Field("content").fragmentSize(500).numOfFragments(1).noMatchSize(500).preTags("<font color='red'>").postTags("</font>"),
-            new HighlightBuilder.Field("title").fragmentSize(150).numOfFragments(1).noMatchSize(150).preTags("<font color='red'>").postTags("</font>")
+            new HighlightBuilder.Field("content").fragmentSize(100).numOfFragments(1).noMatchSize(100).preTags("<font color='red'>").postTags("</font>"),
+            new HighlightBuilder.Field("title").fragmentSize(30).numOfFragments(1).noMatchSize(30).preTags("<font color='red'>").postTags("</font>")
     };
     /**
      * 显示字段筛选,不显示content字段
